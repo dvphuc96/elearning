@@ -1,0 +1,41 @@
+.bottomImg{
+    display: flex;
+    position: relative;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+    .bgBottomImg{
+        height: 220px;
+        width: 230px;
+        position: relative;
+        background-color: #ed85ab;
+        border-radius: 10px 100px 110px;
+        z-index: 1;
+        img {
+            top: 0;
+            right: 10px;
+            left: 10px;
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            z-index: 10;
+        }
+    }
+    .student {
+        color: #8c8c8c;
+        padding-right: 535px;
+    }
+
+}
+.bottomName {
+    color: #ed85ab;
+    margin-right: auto;
+    font-weight: 500;
+    margin-top: 30px;
+}
+.student {
+    margin-right: auto;
+    color: #8c8c8c;
+}
+
+

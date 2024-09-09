@@ -1,0 +1,51 @@
+.itemInfo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  // color: #fff;
+  gap: 20px;
+  text-align: left;
+  .infoItemHome {
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+    h3 {
+        font-weight: 500;
+        font-size: 30px;
+    }
+    li {
+        padding: 5px;
+    }
+    .infoContent::before {
+        content: "";
+        position: absolute;
+        display: block;
+        top: 0;
+        left: -160%;
+        width: 50%;
+        height: 100%;
+        z-index: 2;
+        background: linear-gradient(
+          90deg,
+          hsla(0, 0%, 100%, 0) 0,
+          hsla(0, 0%, 100%, 0.3)
+        );
+      }
+  }
+  .largeItem {
+    grid-row: 1 / span 2;
+    background-color: #41b294;
+    background-position: 100% 100%;
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-image: url(https://demo2.cybersoft.edu.vn/static/media/astronaut.3c90d598.png);
+  }
+  .smallItem1{
+    background-color: #f6ba35;
+  }
+  .smallItem2{
+    background-color: #5c8295;
+  }
+  .smallItem3{
+    background-color: #63c0a8;
+  }
+}

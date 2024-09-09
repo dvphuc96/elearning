@@ -1,0 +1,10 @@
+#root {
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  } 
+  
+  .custom-modal .ant-modal-content{
+    padding: 0;
+    border-radius: 10px;
+  }

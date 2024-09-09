@@ -1,0 +1,67 @@
+.container {
+  font-family: monospace;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  .text {
+    animation: slideIn 1s ease-in-out;
+    h1 {
+      font-size: 6rem;
+      color: #ff6b6b;
+      margin: 0;
+      font-weight: 600;
+    }
+    h2 {
+      font-size: 2rem;
+      color: #333;
+      font-weight: 600;
+    }
+    p {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background-color: #ff6b6b;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 1rem;
+      margin-top: 30px;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #ff5252;
+    }
+  }
+  .emoji {
+    font-size: 5rem;
+    margin-top: 20px;
+    animation: bounce 1.5s infinite;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

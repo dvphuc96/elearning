@@ -1,0 +1,69 @@
+.titleMaker {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  .imgFooter {
+    height: 40px;
+    width: 40px;
+    padding: 2px;
+    border-color: #f6ba35 transparent;
+    border-left: 1px solid transparent;
+    border-bottom: 1px solid #f6ba35;
+    border-right: 1px solid transparent;
+    border-top: 1px solid #f6ba35;
+    border-radius: 50%;
+  }
+  .cardColor {
+    color: #8c8c8c;
+    font-size: 15px;
+  }
+}
+.customTitle {
+  font-size: 20px;
+  color: black;
+  font-weight: bold;
+}
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  p:first-of-type {
+    color: #8c8c8c;
+    font-size: 12px;
+    text-decoration-line: line-through;
+  }
+  p:nth-of-type(2) {
+    font-weight: 500;
+    color: #8c8c8c;
+  }
+  .textStar {
+    color: #f6ba35;
+  }
+  .cardColor {
+    color: #8c8c8c;
+  }
+}
+.cardIcon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+  span {
+    color: #8c8c8c;
+    i {
+      margin-right: 3px;
+    }
+  }
+  .icon0Clock {
+    color: #f5c002;
+  }
+  .iconCalendar {
+    color: #f06f68;
+  }
+  .iconLevel {
+    color: #65c9ff;
+  }
+}
+

@@ -1,0 +1,32 @@
+.titleCourse {
+  margin: 120px 0 0 0;
+  padding: 50px;
+  text-transform: uppercase;
+  background-color: #ffd60a;
+  color: #fff;
+  text-align: left;
+  h3 {
+    font-size: 30px;
+    font-weight: 500;
+  }
+  p {
+    font-size: 13px;
+  }
+}
+.courseCateName {
+  text-align: left;
+  margin-bottom: 30px;
+  .courseCategoryBtn {
+    display: inline-block;
+    border-radius: 25px;
+    padding: 12px 10px;
+    cursor: default;
+    border: 2px solid #e4e4e4;
+    outline: none;
+    transition: 0.5s linear;
+    font-weight: 500;
+    i {
+      color: #f6ba35;
+    }
+  }
+}

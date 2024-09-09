@@ -1,0 +1,52 @@
+.instructorContent{
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    border-radius: 5px;
+    border: none;
+    transition: all .5s;
+    img {
+        height: 80px;
+        width: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    h6 {
+        padding-top: 5px;
+        font-weight: 600;
+    }
+    .textRole{
+        padding: 3px 0;
+    }
+    i {
+        color: #f6ba35;
+    }
+    .textStar {
+        color: #f6ba35;
+    }
+    .textReview {
+        font-size: 14px;
+        color: #8c8c8c;
+    }
+}
+.slick-dots {
+    bottom: -20px !important; /* Điều chỉnh vị trí */
+    
+    li {
+      margin: 0 5px !important; /* Điều chỉnh khoảng cách giữa các dot */
+    }
+  
+    button:before {
+      font-size: 12px !important;
+      color: #ccc !important; /* Màu dot mặc định */
+      opacity: 1 !important;
+    }
+  
+    li.slick-active button:before {
+      color: #f6ba35 !important; /* Màu của dot khi active */
+    }
+  }
