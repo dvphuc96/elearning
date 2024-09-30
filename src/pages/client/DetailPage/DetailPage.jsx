@@ -1,12 +1,33 @@
 import { AuthTemplate } from "components";
 import { useOpenModal } from "hooks/useOpenModal";
-import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
 import styles from "./DetailPage.module.scss";
+import { useAuth } from "hooks";
+import { useMutation } from "@tanstack/react-query";
+import { courseApi } from "apis";
+import { toast } from "react-toastify";
 
 export const DetailPage = () => {
   const { isOpen, openModal, closeModal } = useOpenModal();
+  const { accessToken, userLogin } = useAuth();
+  const { maKhoaHoc } = useParams();
+  const { mutate: handleRegisterCourse } = useMutation({
+    mutationFn: (payload) => courseApi.registerCourse(payload),
+    onSuccess: () => {
+      toast.success("Đăng ký khóa học thành công!");
+    },
+    onError: () => {
+      toast.error('Đăng ký khoá học thất bại!');
+    },
+  });
+  const onSubmitCourse = () => {
+    const payload = {
+      maKhoaHoc: "123478",
+      taikhoan: userLogin?.taiKhoan,
+    };
+    handleRegisterCourse(payload);
+  };
   return (
     <>
       <div className={styles.titleCourse}>
@@ -307,9 +328,18 @@ export const DetailPage = () => {
                   <i className="fas fa-bolt"></i>500.000<sup>đ</sup>
                 </p>
               </div>
-              <NavLink to="/" onClick={openModal}>
-                <button className={styles.btnPreview}>Đăng ký</button>
-              </NavLink>
+              {accessToken ? (
+                <NavLink
+                  to="javascript:void(0)"
+                  onClick={() => onSubmitCourse()}
+                >
+                  <button className={styles.btnPreview}>Đăng Ký</button>
+                </NavLink>
+              ) : (
+                <NavLink to="/" onClick={openModal}>
+                  <button className={styles.btnPreview}>Đăng Nhập</button>
+                </NavLink>
+              )}
               <div className={styles.sideBarDetailContent}>
                 <ul>
                   <li>
