@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./Footer.module.scss";
 
 export const Footer = () => {
@@ -22,7 +21,7 @@ export const Footer = () => {
                 <span>devit@gmail.com</span>
               </li>
               <li>
-                <i class="fas fa-map-marker-alt iconFooter"></i>
+                <i className="fas fa-map-marker-alt iconFooter"></i>
                 <span>Đà Nẵng</span>
               </li>
             </ul>

@@ -1,4 +1,4 @@
-import { ErrorMessage, InputStyled } from "components";
+import { InputStyled } from "components";
 
 export const Input = ({
   className = "",

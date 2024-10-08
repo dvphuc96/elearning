@@ -1,18 +1,44 @@
-import { Button } from "antd";
+import { Avatar, Button, Popover } from "antd";
 import cn from "classnames";
 import { AuthTemplate } from "components";
 import { useQueryParams } from "hooks";
 import { useOpenModal } from "hooks/useOpenModal";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import styles from "./Header.module.scss";
+import { useAuth } from "hooks";
+import { useDispatch } from "react-redux";
+import { userManagementActions } from "../../store/userManagement";
+import { toast } from "react-toastify";
+import { userApi } from "apis";
 
 export const Header = () => {
   const [inputValue, setInputValue] = useState("");
   const { isOpen, openModal, closeModal } = useOpenModal();
   const [queryParams, setQueryParams] = useQueryParams();
+  const { accessToken, userLogin } = useAuth();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    try {
+      dispatch(userManagementActions.logout());
+      toast.success("Logout Success");
+    } catch (error) {
+      console.log(error);
+      toast.error("Logout Failed");
+    }
+  };
 
+  const handleAccount = async () => {
+    try {
+      const response = await userApi.getUserByAccessToken();
+      dispatch(userManagementActions.getUserByAccessToken(response));
+      navigate("/account");
+    } catch (error) {
+      toast.error(error);
+    }
+  };
   return (
     <>
       <Container
@@ -49,7 +75,7 @@ export const Header = () => {
                       to="/didong"
                       className="block px-4 py-2 hover:bg-gray-100"
                     >
-                      LẬP TRÌNH DI ĐỘNG 
+                      LẬP TRÌNH DI ĐỘNG
                     </NavLink>
                     <NavLink
                       to="/frontend"
@@ -119,12 +145,47 @@ export const Header = () => {
                     English
                   </NavLink>
                 </li>
-                <li>
-                  <NavLink to="/" onClick={openModal}>
-                    <i className="fa-regular fa-face-smile-wink"></i>
-                    TÀI KHOẢN
-                  </NavLink>
-                </li>
+                {accessToken ? (
+                  <>
+                    <Popover
+                      content={
+                        <div className="p-10 cursor-pointer">
+                          <p className="font-500 text-16">
+                            Hello {userLogin?.hoTen}!
+                          </p>
+                          <hr className="my-16" />
+                          <p className="text-16" onClick={handleAccount}>
+                            Thông tin tài khoản
+                          </p>
+                          <hr className="my-16" />
+                          {userLogin.maLoaiNguoiDung === 'GV' && (<NavLink className="" to="/admin">Admin Page</NavLink>)}
+                          <hr className="my-16" />
+                          <Button
+                            className="！h-[46px]"
+                            type="primary"
+                            onClick={handleLogout}
+                          >
+                            <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                            <span className="ml-10">Đăng xuất</span>
+                          </Button>
+                        </div>
+                      }
+                      trigger="click"
+                      arrow={true}
+                    >
+                      <Avatar size="large" className="cursor-pointer mt-10">
+                        <i className="fa-regular fa-user text-20"></i>
+                      </Avatar>
+                    </Popover>
+                  </>
+                ) : (
+                  <li>
+                    <NavLink to="/" onClick={openModal}>
+                      <i className="fa-regular fa-face-smile-wink"></i>
+                      TÀI KHOẢN
+                    </NavLink>
+                  </li>
+                )}
               </ul>
             </div>
           </nav>

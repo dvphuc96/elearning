@@ -6,12 +6,13 @@ import path from 'path'
 
 export default defineConfig({
   server: {
-    port: 3000,
+    port: 3001,
   },
   plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve("./src"),
+      apis: path.resolve("./src/apis"),
       assets: path.resolve("./src/assets"),
       components: path.resolve("./src/components"),
       constant: path.resolve("./src/constant"),
