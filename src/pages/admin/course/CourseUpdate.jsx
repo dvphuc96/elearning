@@ -1,7 +1,327 @@
-import React from 'react'
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Input, Form, InputNumber, Button, DatePicker, Select, Upload } from "antd";
+import { useCallback, useEffect, useState } from "react";
+import { Controller, useForm } from 'react-hook-form';
+import { courseApi } from "../../../apis/course.api";
+import { useAuth } from "hooks";
+import { toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
+import { PATH } from "../../../constants/path";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CreateOrUpdateCourseSchema } from "../../../schema/CreateOrUpdateCourseSchema";
+import dayjs from "dayjs";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { object } from "zod";
 
 export const CourseUpdate = () => {
+  const { maKhoaHoc } = useParams();
+  const { userLogin } = useAuth();
+  const [imgSrc, setImgSrc] = useState("");
+  const navigate = useNavigate();
+  const {
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm({
+    mode: "all",
+    // resolver: zodResolver(CreateOrUpdateCourseSchema),
+    defaultValues: {
+      maKhoaHoc: '',
+      tenKhoaHoc: '',
+      biDanh: '',
+      moTa: '',
+      luotXem: '',
+      danhGia: '',
+      maDanhMucKhoaHoc: '',
+      ngayTao: '',
+      taiKhoanNguoiTao: '',
+      hinhAnh: undefined,
+    },
+  });
+  const { data: listCategory } = useQuery({
+    queryKey: ["category"],
+    queryFn: () => courseApi.getListCategory(),
+  })
+  const { data: courseDetail } = useQuery({
+    queryKey: ["course-detail", maKhoaHoc],
+    queryFn: () => courseApi.getDetailCourse(maKhoaHoc),
+  })
+  const { mutate: handleUpdateCourse, isPending } = useMutation({
+    mutationFn: (payload) => courseApi.updateCourse(payload),
+    onSuccess: () => {
+      toast.success("Cập nhật khoá học thành công!");
+      navigate(PATH.course);
+    },
+    onError: (error) => {
+      toast.error(error)
+    }
+  })
+  const setImageAsBlob = useCallback(async (imageUrl) => {
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+      const blob = await response.blob();
+      const file = new File([blob], "image.jpg", { type: blob.type });
+      setValue("hinhAnh", file);
+    } catch (error) {
+      console.error("Error converting image URL to Blob:", error);
+    }
+  }, [setValue]);
+
+  useEffect(() => {
+    if (courseDetail) {
+      setValue('maKhoaHoc', courseDetail.maKhoaHoc);
+      setValue('tenKhoaHoc', courseDetail.tenKhoaHoc);
+      setValue('biDanh', courseDetail.biDanh);
+      setValue('moTa', courseDetail.moTa);
+      setValue('luotXem', courseDetail.luotXem);
+      setValue('danhGia', courseDetail?.danhGia?.toString() ?? 10);
+      setValue('maDanhMucKhoaHoc', courseDetail?.danhMucKhoaHoc?.maDanhMucKhoahoc);
+      setValue('taiKhoanNguoiTao', userLogin.taiKhoan);
+      setValue("ngayTao", courseDetail?.ngayTao);
+      setImageAsBlob(courseDetail?.hinhAnh);
+    }
+  }, [courseDetail, setValue, userLogin.taiKhoan, setImageAsBlob]);
+
+  const watchHinhAnh = watch('hinhAnh')
+  console.log({ watchHinhAnh })
+  const onSubmit = async (values) => {
+    values.maKhoaHoc = courseDetail?.maKhoaHoc;
+    values.maNhom = "GP01";
+    const formData = new FormData();
+    for (let key in values) {
+      if (key !== "hinhAnh") {
+        formData.append(key, values[key]);
+      } else {
+        if (typeof values.hinhAnh === object) {
+          formData.append('File', values.hinhAnh[0], values.hinhAnh.name);
+        } else {
+          formData.append('hinhAnh', values.hinhAnh);
+        }
+      }
+    }
+    handleUpdateCourse(formData);
+    reset();
+  }
   return (
-    <div>CourseUpdate</div>
+    <>
+      <Form
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
+        layout="horizontal"
+        style={{ maxWidth: 600 }}
+        onFinish={handleSubmit(onSubmit)}
+      >
+        <Form.Item label="Mã Khoá Học">
+          <Controller
+            name="maKhoaHoc"
+            defaultValue=""
+            disabled
+            control={control}
+            render={({ field }) => <Input {...field} />}
+          />
+          {errors.maKhoaHoc && (
+            <p className="text-red-500 font-600 text-15 mt-10 text-left">
+              {errors?.maKhoaHoc?.message}
+            </p>
+          )}
+        </Form.Item>
+        <Form.Item label="Tên Khoá Học">
+          <Controller
+            name="tenKhoaHoc"
+            defaultValue=""
+            control={control}
+            render={({ field }) => <Input {...field} />}
+          />
+          {errors.tenKhoaHoc && (
+            <p className="text-red-500 font-600 text-15 mt-10 text-left">
+              {errors?.tenKhoaHoc?.message}
+            </p>
+          )}
+        </Form.Item>
+        <Form.Item label="Bí Danh">
+          <Controller
+            name="biDanh"
+            defaultValue=""
+            control={control}
+            render={({ field }) => <Input {...field} />}
+          />
+          {errors.biDanh && (
+            <p className="text-red-500 font-600 text-15 mt-10 text-left">
+              {errors?.biDanh?.message}
+            </p>
+          )}
+        </Form.Item>
+        <Form.Item label="Mô tả">
+          <Controller
+            name="moTa"
+            defaultValue=""
+            control={control}
+            render={({ field }) => <Input {...field} />}
+          />
+          {errors.moTa && (
+            <p className="text-red-500 font-600 text-15 mt-10 text-left">
+              {errors?.moTa?.message}
+            </p>
+          )}
+        </Form.Item>
+        <Form.Item label="Lượt Xem">
+          <Controller
+            name="luotXem"
+            control={control}
+            render={({ field }) => {
+              return <InputNumber className="flex" {...field} />
+            }}
+          />
+          {errors.luotXem && (
+            <p className="text-red-500 font-600 text-15 mt-10 text-left">
+              {errors?.luotXem?.message}
+            </p>
+          )}
+        </Form.Item>
+        <Form.Item label="Đánh giá">
+          <Controller
+            name="danhGia"
+            control={control}
+            render={({ field }) => <InputNumber className="flex" {...field} />}
+          />
+          {errors.danhGia && (
+            <p className="text-red-500 font-600 text-15 mt-10 text-left">
+              {errors?.danhGia?.message}
+            </p>
+          )}
+        </Form.Item>
+        <Form.Item label="Danh Mục Khoá Học">
+          <Controller
+            name="maDanhMucKhoaHoc"
+            defaultValue=""
+            control={control}
+            render={({ field }) => {
+              return (
+                <Select
+                  className="flex text-left"
+                  showSearch
+                  style={{
+                    width: 225,
+                  }}
+                  placeholder="Chọn danh mục khóa học"
+                  value={field}
+                  onChange={(value) => {
+                    field.onChange(value);
+                  }}
+                  options={
+                    listCategory?.map(ele => ({ value: ele.maDanhMuc, label: ele.tenDanhMuc }))
+                  }
+                />
+              )
+            }}
+          />
+          {errors.maDanhMucKhoaHoc && (
+            <p className="text-red-500 font-600 text-15 mt-10 text-left">
+              {errors?.maDanhMucKhoaHoc?.message}
+            </p>
+          )}
+        </Form.Item>
+        <Form.Item label="Ngày tạo">
+          <Controller
+            name="ngayTao"
+            control={control}
+            render={({ field }) => {
+              return (
+                <DatePicker
+                  className="flex w-1/2"
+                  picker="date"
+                  format={"DD/MM/YYYY"}
+                  value={field.value ? dayjs(field.value, "DD/MM/YYYY") : null}
+                  onChange={(_, dateString) => {
+                    field.onChange(dateString);
+                  }}
+                />
+              );
+            }}
+          />
+          {errors.ngayTao && (
+            <p className="text-red-500 font-600 text-15 mt-10 text-left">
+              {errors?.ngayTao?.message}
+            </p>
+          )}
+        </Form.Item>
+        <Form.Item label="Hình ảnh">
+          <Controller
+            name='hinhAnh'
+            control={control}
+            render={({ field: { onChange, ...field } }) => {
+              return (
+                <Upload
+                  {...field}
+                  name='avatar'
+                  listType='picture-card'
+                  className='avatar-uploader mt-1 relative w-fit'
+                  showUploadList={false}
+                  multiple={false}
+                  beforeUpload={() => false}
+                  onChange={({ file }) => {
+                    onChange(file);
+                  }}
+                >
+                  <button
+                    style={{
+                      border: 0,
+                      background: 'none',
+                    }}
+                    type="button"
+                  >
+                    <div>
+                      {watchHinhAnh
+                        ? (
+                          <>
+                            <img className='w-[100px] h-[100ppx] object-cover' src={(watchHinhAnh instanceof File
+                              ? URL.createObjectURL(watchHinhAnh)
+                              : watchHinhAnh)} />
+                            <div onClick={(event) => { event.stopPropagation(); setValue('hinhAnh', undefined) }} className='absolute top-2 right-2 cursor-pointer hover:text-red-500'>
+                              <DeleteOutlined />
+                            </div>
+                          </>
+                        )
+                        : (
+                          <PlusOutlined />
+                        )}
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: 0,
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          marginTop: 8,
+                        }}
+                      >
+                        Upload
+                      </div>
+                    </div>
+                  </button>
+                </Upload>)
+            }}
+          />
+          {/* <input
+            type="file"
+            {...register("hinhAnh")}
+            accept="image/jpeg, image/png, image/gif, image/jpg"
+            onChange={handleChangeFile}
+          />
+          <br />
+          <img style={{ width: 150, height: 150 }} src={imgSrc} alt="..." /> */}
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={isPending}>
+            Cập nhật Khoá Học
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   )
 }
