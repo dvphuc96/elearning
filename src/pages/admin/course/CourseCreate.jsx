@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../../constants/path";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateOrUpdateCourseSchema } from "../../../schema/CreateOrUpdateCourseSchema";
+import { CreateCourseSchema } from "../../../schema/CreateOrUpdateCourseSchema";
 
 export const CourseCreate = () => {
   const [imgSrc, setImgSrc] = useState("");
@@ -21,7 +21,7 @@ export const CourseCreate = () => {
     formState: { errors },
   } = useForm({
     mode: "all",
-    resolver: zodResolver(CreateOrUpdateCourseSchema),
+    resolver: zodResolver(CreateCourseSchema),
   });
 
   const handleChangeFile = (event) => {

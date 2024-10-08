@@ -65,7 +65,11 @@ export const courseApi = {
   },
   updateCourse: async (formData) => {
     try {
-      const response = await fetcher.post("QuanLyKhoaHoc/CapNhatKhoaHocUpload", formData);
+      const hinhAnh = formData.get('hinhAnh');
+      const isFileUpload = hinhAnh instanceof File || hinhAnh instanceof Blob;
+      const response = isFileUpload
+      ? await fetcher.post("QuanLyKhoaHoc/CapNhatKhoaHocUpload", formData)
+      : await fetcher.put("QuanLyKhoaHoc/CapNhatKhoaHoc", Object.fromEntries(formData.entries()));
       handleSleep();
       return response?.data;
     } catch (error) {

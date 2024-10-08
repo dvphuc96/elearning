@@ -1,34 +1,33 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Breadcrumb, Button, Pagination, Popconfirm, Rate, Table, Tag } from 'antd';
+import { Breadcrumb, Button, Pagination, Popconfirm, Rate, Table, Tag, Input } from 'antd';
 import { useState } from 'react';
 import { courseApi } from '../../../apis/course.api';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { PATH } from '../../../constants/path';
+const { Search } = Input;
+import { useQueryParams } from "hooks"
 
 export const CourseList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const queryClient = useQueryClient();
+  const [queryParams, setQueryParams] = useQueryParams();
+
   const navigate = useNavigate();
-  const {mutate: handleDeleteCourseApi} = useMutation({
+  const { mutate: handleDeleteCourseApi } = useMutation({
     mutationFn: (maKhoaHoc) => courseApi.deleteCourse(maKhoaHoc),
     onSuccess: () => {
       toast.success("Xoá Khoá học thành công!");
-      queryClient.resetQueries({ 
-        queryKey: ["list-courses"], 
-        exact: true 
-      })
+      queryClient.resetQueries({
+        queryKey: ["list-courses"],
+        exact: true,
+      });
       queryClient.invalidateQueries({
         queryKey: ["list-courses"],
         stale: true,
         refetchType: 'all',
       });
-      // queryClient.refetchQueries({
-      //   queryKey: ['list-courses', { currentPage }],
-      //   type: 'active',
-      // });
     },
-
     onError: (error) => {
       toast.error(error);
     }
@@ -44,6 +43,15 @@ export const CourseList = () => {
     return <div>Something went wrong</div>;
   }
 
+  const onSearch = (value) => {
+    setQueryParams({
+      tenKhoaHoc: value || undefined,
+    });
+  }
+
+  const courseSearch = dataSource?.filter((element) =>
+    element.tenKhoaHoc.toLowerCase().includes(queryParams?.tenKhoaHoc?.toLowerCase())
+  );
   const columns = [
     {
       title: 'MaKhoaHoc',
@@ -136,7 +144,17 @@ export const CourseList = () => {
         />
       </div>
       <h3 className="font-medium text-2xl mb-[30px]">List Course</h3>
-      <Table rowKey="maKhoaHoc" columns={columns} dataSource={dataSource} pagination={false} loading={false} />
+      <div className='flex justify-end mb-[20px]'>
+        <Search
+          placeholder="Keyword"
+          className='w-1/2'
+          allowClear
+          enterButton="Search"
+          size="large"
+          onSearch={onSearch}
+        />
+      </div>
+      <Table rowKey="maKhoaHoc" columns={columns} dataSource={queryParams?.tenKhoaHoc ? courseSearch : dataSource} pagination={false} loading={false} />
       <div className="flex justify-end mt-10">
         <Pagination
           total={total}

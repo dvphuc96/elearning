@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Input, Form, InputNumber, Button, DatePicker, Select, Upload } from "antd";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from 'react-hook-form';
 import { courseApi } from "../../../apis/course.api";
 import { useAuth } from "hooks";
@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { PATH } from "../../../constants/path";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateOrUpdateCourseSchema } from "../../../schema/CreateOrUpdateCourseSchema";
+import { UpdateCourseSchema } from "../../../schema/CreateOrUpdateCourseSchema";
 import dayjs from "dayjs";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { object } from "zod";
@@ -16,7 +16,6 @@ import { object } from "zod";
 export const CourseUpdate = () => {
   const { maKhoaHoc } = useParams();
   const { userLogin } = useAuth();
-  const [imgSrc, setImgSrc] = useState("");
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -27,7 +26,7 @@ export const CourseUpdate = () => {
     formState: { errors },
   } = useForm({
     mode: "all",
-    // resolver: zodResolver(CreateOrUpdateCourseSchema),
+    resolver: zodResolver(UpdateCourseSchema),
     defaultValues: {
       maKhoaHoc: '',
       tenKhoaHoc: '',
@@ -59,19 +58,6 @@ export const CourseUpdate = () => {
       toast.error(error)
     }
   })
-  const setImageAsBlob = useCallback(async (imageUrl) => {
-    try {
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`);
-      }
-      const blob = await response.blob();
-      const file = new File([blob], "image.jpg", { type: blob.type });
-      setValue("hinhAnh", file);
-    } catch (error) {
-      console.error("Error converting image URL to Blob:", error);
-    }
-  }, [setValue]);
 
   useEffect(() => {
     if (courseDetail) {
@@ -82,17 +68,17 @@ export const CourseUpdate = () => {
       setValue('luotXem', courseDetail.luotXem);
       setValue('danhGia', courseDetail?.danhGia?.toString() ?? 10);
       setValue('maDanhMucKhoaHoc', courseDetail?.danhMucKhoaHoc?.maDanhMucKhoahoc);
-      setValue('taiKhoanNguoiTao', userLogin.taiKhoan);
       setValue("ngayTao", courseDetail?.ngayTao);
-      setImageAsBlob(courseDetail?.hinhAnh);
+      setValue("hinhAnh", courseDetail?.hinhAnh);
     }
-  }, [courseDetail, setValue, userLogin.taiKhoan, setImageAsBlob]);
+  }, [courseDetail, setValue]);
 
   const watchHinhAnh = watch('hinhAnh')
-  console.log({ watchHinhAnh })
   const onSubmit = async (values) => {
     values.maKhoaHoc = courseDetail?.maKhoaHoc;
     values.maNhom = "GP01";
+    values.taiKhoanNguoiTao = userLogin.taiKhoan;
+
     const formData = new FormData();
     for (let key in values) {
       if (key !== "hinhAnh") {
@@ -125,11 +111,6 @@ export const CourseUpdate = () => {
             control={control}
             render={({ field }) => <Input {...field} />}
           />
-          {errors.maKhoaHoc && (
-            <p className="text-red-500 font-600 text-15 mt-10 text-left">
-              {errors?.maKhoaHoc?.message}
-            </p>
-          )}
         </Form.Item>
         <Form.Item label="Tên Khoá Học">
           <Controller
@@ -307,14 +288,6 @@ export const CourseUpdate = () => {
                 </Upload>)
             }}
           />
-          {/* <input
-            type="file"
-            {...register("hinhAnh")}
-            accept="image/jpeg, image/png, image/gif, image/jpg"
-            onChange={handleChangeFile}
-          />
-          <br />
-          <img style={{ width: 150, height: 150 }} src={imgSrc} alt="..." /> */}
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={isPending}>

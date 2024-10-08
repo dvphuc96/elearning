@@ -8,6 +8,7 @@ export const useQueryParams = () => {
   const location = useLocation();
   const queryParams = Object.fromEntries(searchParams);
 
+
   const setQueryParams = (param) => {
     const queryString = qs.stringify(param, {
       addQueryPrefix: true,

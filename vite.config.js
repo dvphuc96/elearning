@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { splitVendorChunkPlugin } from 'vite'
 
 // https://vitejs.dev/config/
 import path from 'path'
@@ -8,10 +9,7 @@ export default defineConfig({
   server: {
     port: 3001,
   },
-  build: {
-    chunkSizeWarningLimit: 1600
-  },
-  plugins: [react()],
+  plugins: [react(), splitVendorChunkPlugin()],
   resolve: {
     alias: {
       "@": path.resolve("./src"),
